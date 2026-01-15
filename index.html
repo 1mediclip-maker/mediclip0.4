@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediclip (메디클립) - 병원 경영의 퀀텀 점프</title>
+    
+    <!-- Fonts: Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#020c1b', // Deeper Navy Background (Updated)
+                            800: '#0a192f', // Lighter Navy for cards (Previous 900)
+                        },
+                        accent: {
+                            yellow: '#fbbf24', // Highlights
+                            orange: '#f97316', // CTA
+                            orangeHover: '#ea580c'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Swiper.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        .glass-nav {
+            background: rgba(2, 12, 27, 0.85); /* Updated to match new navy-900 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020c1b; } /* Updated */
+        ::-webkit-scrollbar-thumb { background: #0a192f; border-radius: 4px; } /* Updated */
+        ::-webkit-scrollbar-thumb:hover { background: #f97316; }
+        
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Animation Utilities */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Stagger Delays */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        
+        /* Hide scrollbar for horizontal sections if needed */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Swiper Customization */
+        .swiper-pagination-bullet-active {
+            background-color: #f97316 !important; /* accent-orange */
+            width: 24px !important;
+            border-radius: 4px !important;
+            transition: all 0.3s;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="font-sans text-gray-800 antialiased overflow-x-hidden bg-navy-900">
+    <div id="root"></div>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Product",
+          "sku": "PKG-START",
+          "name": "스타팅 포인트",
+          "description": "개원 1년 미만/1인 의원용. 99마케팅+199컨설팅 결합. 저비용 기초 마련.",
+          "image": "https://mediclip.kr/images/starting-point.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "price": "2980000" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PKG-JUMP",
+          "name": "점핑 포인트",
+          "description": "성장 정체기/경쟁 지역용. 올인원마케팅+199컨설팅 결합. 독보적 컨셉 구축.",
+          "image": "https://mediclip.kr/images/jumping-point.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" } 
+        },
+        {
+          "@type": "Product",
+          "sku": "PKG-SCALE",
+          "name": "스케일업 포인트",
+          "description": "병원 확장/시스템 셋팅용. 올인원마케팅+올인원컨설팅+시스템플랜. 퀀텀 점프 실현.",
+          "image": "https://mediclip.kr/images/scaleup-point.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-MKT-99",
+          "name": "99 마케팅",
+          "description": "저비용 고효율. 네이버 플레이스/블로그, 인스타 관리. 초기 온라인 존재감 확보.",
+          "image": "https://mediclip.kr/images/99-marketing.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "price": "990000" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-MKT-ALL",
+          "name": "올인원 마케팅",
+          "description": "브랜딩/팬덤 확보. 언론보도, 오프라인 광고, CRM 연동, 채널별 맞춤 브랜딩.",
+          "image": "https://mediclip.kr/images/allinone-marketing.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-CS-199",
+          "name": "199 컨설팅",
+          "description": "경영 진단 & 기초 설계. 마케팅 정밀 진단, 기초 진료 전략 수립.",
+          "image": "https://mediclip.kr/images/199-consulting.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "price": "1990000" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-CS-ALL",
+          "name": "올인원 컨설팅",
+          "description": "퀀텀 성장 설계. 입지/인테리어/HR/온오프라인 통합 전략. 성공 방정식 제공.",
+          "image": "https://mediclip.kr/images/allinone-consulting.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-SYS-DB",
+          "name": "DB 새로고침",
+          "description": "구환 리타겟팅. 광고비 0원으로 매출 증대, 개인화 메시지 발송.",
+          "image": "https://mediclip.kr/images/db-refresh.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" }
+        },
+        {
+          "@type": "Product",
+          "sku": "PLAN-SYS-WORK",
+          "name": "스마트 워크 시스템",
+          "description": "업무 효율화. 데스크/진료실/마케팅실 업무 통합 및 매뉴얼화.",
+          "image": "https://mediclip.kr/images/smart-work-system.jpg",
+          "brand": { "@type": "Brand", "name": "메디클립" },
+          "offers": { "@type": "Offer", "priceCurrency": "KRW", "availability": "https://schema.org/InStock", "price": "0" }
+        }
+      ]
+    }
+    </script>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
